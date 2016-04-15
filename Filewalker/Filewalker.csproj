@@ -50,6 +50,7 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="DateTimeComparer.cs" />
     <Compile Include="FileEnumerator.cs">
       <SubType>Form</SubType>
     </Compile>

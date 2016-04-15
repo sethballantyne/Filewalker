@@ -38,7 +38,7 @@ namespace Filewalker
                 "{0} {1}.{2}", 
                 AssemblyProduct,
                 Assembly.GetExecutingAssembly().GetName().Version.Major,
-                Assembly.GetExecutingAssembly().GetName().Version.MajorRevision
+                Assembly.GetExecutingAssembly().GetName().Version.Minor
                 );
 
 

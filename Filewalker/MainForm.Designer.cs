@@ -81,6 +81,7 @@ namespace Filewalker
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
+            this.dateColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -277,7 +278,8 @@ namespace Filewalker
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.fileNameColumnHeader,
             this.PathColumnHeader,
-            this.fileSizeColumnHeader});
+            this.fileSizeColumnHeader,
+            this.dateColumnHeader});
             this.listView.ContextMenuStrip = this.contextMenuStrip;
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView.FullRowSelect = true;
@@ -317,6 +319,11 @@ namespace Filewalker
             this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth16Bit;
             this.imageList.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // dateColumnHeader
+            // 
+            this.dateColumnHeader.Text = "Date";
+            this.dateColumnHeader.Width = 100;
             // 
             // MainForm
             // 
@@ -374,6 +381,7 @@ namespace Filewalker
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem openDirectoryToolStripMenuItem;
         private System.Windows.Forms.ImageList imageList;
+        private System.Windows.Forms.ColumnHeader dateColumnHeader;
     }
 }
 

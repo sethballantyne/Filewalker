@@ -47,6 +47,8 @@ namespace Filewalker
         //
         FormattedFileSizeComparer fileSizeComparer = new FormattedFileSizeComparer();
 
+        DateTimeComparer dateTimeComparer = new DateTimeComparer();
+
         /// <summary>
         /// 
         /// </summary>
@@ -60,14 +62,16 @@ namespace Filewalker
             items[0] = (ListViewItem)x;
             items[1] = (ListViewItem)y;
 
-            if(column != 2)
+            // name and directory columns
+            if(column == 0 || column == 1)
             {
+                // 
                 result = caseInsensitiveComparer.Compare(
                 items[0].SubItems[column].Text,
                 items[1].SubItems[column].Text
                 );
             }
-            else
+            else if(column == 2)    // size column
             {
                 result = fileSizeComparer.Compare(
                     items[0].SubItems[column].Text,
@@ -77,6 +81,13 @@ namespace Filewalker
                 //Convert.ToInt64(items[0].SubItems[column].Text),
                 //Convert.ToInt64(items[1].SubItems[column].Text)
                 //);
+            }
+            else // date column
+            {
+                result = dateTimeComparer.Compare(
+                    items[0].SubItems[column].Text,
+                    items[1].SubItems[column].Text
+                );
             }
 
             if (sortOrder == SortOrder.Ascending)

@@ -89,18 +89,20 @@ namespace Filewalker
             this.directoryCount = dirInfo.GetDirectories().Length + 1;
             this.fileCount = files.Length;
 
-            string[] items = new string[3];
+            string[] items = new string[listView.Columns.Count];
 
             List<ListViewItem> listViewItems = new List<ListViewItem>(files.Length);
 
             listView.Items.Clear();
             foreach (FileInfo file in files)
             {
+                string filePath = file.DirectoryName + @"\" + file.Name;
+
                 items[0] = file.Name;
                 items[1] = file.DirectoryName;
                 items[2] = FileSizeConverter.Format(file.Length);
-
-                string filePath = file.DirectoryName + @"\" + file.Name;
+                items[3] = File.GetCreationTime(filePath).ToString();
+                
 
                 string fileExtension = Path.GetExtension(filePath);
                 if(imageList.Images[fileExtension] == null)
