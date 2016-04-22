@@ -1,0 +1,8 @@
+﻿-------------------------------------------------
+-- 1.2
+-------------------------------------------------
+* When refreshing or selecting a new directory, the listview won't remove
+  its contents until the pogram has finished scanning the specified directory.
+* Multiple files can now be copied at once.
+* File enumeration is now performed on a seperate thread.
+* File copying is performed on a separate thread.

@@ -51,12 +51,19 @@
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
     <Compile Include="DateTimeComparer.cs" />
+    <Compile Include="FileCopy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FileCopy.Designer.cs">
+      <DependentUpon>FileCopy.cs</DependentUpon>
+    </Compile>
     <Compile Include="FileEnumerator.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FileEnumerator.Designer.cs">
       <DependentUpon>FileEnumerator.cs</DependentUpon>
     </Compile>
+    <Compile Include="FilePath.cs" />
     <Compile Include="FileSizeConverter.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -71,6 +78,9 @@
     <Compile Include="ShellIcon.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileCopy.resx">
+      <DependentUpon>FileCopy.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FileEnumerator.resx">
       <DependentUpon>FileEnumerator.cs</DependentUpon>
@@ -106,6 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Refresh.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="changelog.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

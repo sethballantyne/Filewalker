@@ -64,14 +64,24 @@ namespace Filewalker
         /// </summary>
         private void ChooseDirectory()
         {
-            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                selectedDirectory = folderBrowserDialog.SelectedPath;
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    selectedDirectory = folderBrowserDialog.SelectedPath;
 
-                EnumerateFiles();
+                    EnumerateFiles();
 
-                refreshToolStripMenuItem.Enabled = true;
-                refreshToolStripButton.Enabled = true;
+                    refreshToolStripMenuItem.Enabled = true;
+                    refreshToolStripButton.Enabled = true;
+                }
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message + "\n\n" + e.StackTrace, 
+                    "Unholy Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -80,48 +90,77 @@ namespace Filewalker
         /// </summary>
         private void EnumerateFiles()
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(folderBrowserDialog.SelectedPath);
-
-            FileInfo[] files = dirInfo.GetFiles("*", SearchOption.AllDirectories);
-
-            // + 1 because when the user sets a directory that doesn't contain 
-            // any subdirectories, dirInfo.GetDirectories().Length will return 0.
-            this.directoryCount = dirInfo.GetDirectories().Length + 1;
-            this.fileCount = files.Length;
-
-            string[] items = new string[listView.Columns.Count];
-
-            List<ListViewItem> listViewItems = new List<ListViewItem>(files.Length);
-
-            listView.Items.Clear();
-            foreach (FileInfo file in files)
+            try
             {
-                string filePath = file.DirectoryName + @"\" + file.Name;
+                FileEnumerator fileEnum = new FileEnumerator(selectedDirectory, imageList);
+                DialogResult dr = fileEnum.ShowDialog();
 
-                items[0] = file.Name;
-                items[1] = file.DirectoryName;
-                items[2] = FileSizeConverter.Format(file.Length);
-                items[3] = File.GetCreationTime(filePath).ToString();
-                
 
-                string fileExtension = Path.GetExtension(filePath);
-                if(imageList.Images[fileExtension] == null)
+                if (dr == DialogResult.OK)
                 {
-                    Icon associatedIcon = ShellIcon.GetSmallIcon(file.DirectoryName + "\\" + file.Name);
-                    
-                    // make sure we actually retrieved the files icon; passing a null
-                    // value to the image list will result in an exception being thrown.
-                    if (associatedIcon != null)
-                        imageList.Images.Add(fileExtension, associatedIcon);
+                    // update the number of directories and files processed
+                    // to the statusstrip label an display the correct information
+                    directoryCount = fileEnum.DirectoryCount;
+                    fileCount = fileEnum.FileCount;
+
+                    listView.Items.Clear();
+                    ListViewItem[] items = fileEnum.GetProcessedItems();
+
+                    if (items != null)
+                        listView.Items.AddRange(items);
+
+                    UpdateStatusLabel();
                 }
-                
-                //listViewItems.Add(new ListViewItem()
-                listViewItems.Add(new ListViewItem(items, fileExtension));
             }
+            catch
+            {
+                throw;
+            }
+            
+            
 
-            listView.Items.AddRange(listViewItems.ToArray());
+            //DirectoryInfo dirInfo = new DirectoryInfo(folderBrowserDialog.SelectedPath);
 
-            UpdateStatusLabel();
+            //FileInfo[] files = dirInfo.GetFiles("*", SearchOption.AllDirectories);
+
+            //// + 1 because when the user sets a directory that doesn't contain 
+            //// any subdirectories, dirInfo.GetDirectories().Length will return 0.
+            //this.directoryCount = dirInfo.GetDirectories().Length + 1;
+            //this.fileCount = files.Length;
+
+            //string[] items = new string[listView.Columns.Count];
+
+            //List<ListViewItem> listViewItems = new List<ListViewItem>(files.Length);
+
+            //listView.Items.Clear();
+            //foreach (FileInfo file in files)
+            //{
+            //    string filePath = file.DirectoryName + @"\" + file.Name;
+
+            //    items[0] = file.Name;
+            //    items[1] = file.DirectoryName;
+            //    items[2] = FileSizeConverter.Format(file.Length);
+            //    items[3] = File.GetCreationTime(filePath).ToString();
+                
+
+            //    string fileExtension = Path.GetExtension(filePath);
+            //    if(imageList.Images[fileExtension] == null)
+            //    {
+            //        Icon associatedIcon = ShellIcon.GetSmallIcon(file.DirectoryName + "\\" + file.Name);
+                    
+            //        // make sure we actually retrieved the files icon; passing a null
+            //        // value to the image list will result in an exception being thrown.
+            //        if (associatedIcon != null)
+            //            imageList.Images.Add(fileExtension, associatedIcon);
+            //    }
+                
+            //    //listViewItems.Add(new ListViewItem()
+            //    listViewItems.Add(new ListViewItem(items, fileExtension));
+            //}
+
+            //listView.Items.AddRange(listViewItems.ToArray());
+
+            
         }
 
         /// <summary>
@@ -218,18 +257,60 @@ namespace Filewalker
                 return;
             }
 
+            List<FilePath> filesToCopy = new List<FilePath>();
+
+            
+
             // directory path + filename
             string pathOfFileToCopy = listView.SelectedItems[0].SubItems[1].Text + 
                 "\\" +
                 listView.SelectedItems[0].Text;
 
             // TODO: Move this to its own thread, indicate file copy progress.
-            saveFileDialog.FileName = listView.SelectedItems[0].Text;
-            if(saveFileDialog.ShowDialog() == DialogResult.OK)
+            //saveFileDialog.FileName = listView.SelectedItems[0].Text;
+            if(copyFileFolderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                File.Copy(pathOfFileToCopy, saveFileDialog.FileName, true);
+                long totalBytes = 0;
 
-                MessageBox.Show("File Copied.");
+                foreach (ListViewItem selectedItem in listView.SelectedItems)
+                {
+                    string filename = selectedItem.Text;
+                    string directoryPath = selectedItem.SubItems[1].Text;
+
+                    // verify a file in the selected directory doesn't contain
+                    // a file of the same name.
+                    if (File.Exists(copyFileFolderBrowserDialog.SelectedPath + "\\" + filename))
+                    {
+                        string message = String.Format("The file {0} exists in the specified directory. Overwrite?", filename);
+                       
+                        DialogResult result = MessageBox.Show(message, "Overwrite exsiting file?", 
+                            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                        if(result == DialogResult.Cancel)
+                        {
+                            return;
+                        }
+                        else if(result == DialogResult.No)
+                        {
+                            continue;
+                        }
+                    }
+
+                    filesToCopy.Add(new FilePath(selectedItem.Text,
+                        selectedItem.SubItems[1].Text));
+
+                    totalBytes += new FileInfo(directoryPath + "\\" + filename).Length;
+
+                }
+
+                FileCopy fileCopyDlg = new FileCopy(filesToCopy.ToArray(), @"C:\Users\Seth\Desktop\test", totalBytes);
+                if(fileCopyDlg.ShowDialog() == DialogResult.OK)
+                {
+                    MessageBox.Show("Done");
+                }
+                //File.Copy(pathOfFileToCopy, saveFileDialog.FileName, true);
+
+                //MessageBox.Show("File Copied.");
             }
         }
 
@@ -262,7 +343,7 @@ namespace Filewalker
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EnumerateFiles();
+            RefreshFileList();
         }
 
         private void listView_DoubleClick(object sender, EventArgs e)
@@ -277,7 +358,7 @@ namespace Filewalker
 
         private void refreshToolStripButton_Click(object sender, EventArgs e)
         {
-            EnumerateFiles();
+            RefreshFileList();
         }
 
         private void setPathToolStripButton_Click(object sender, EventArgs e)
@@ -312,6 +393,21 @@ namespace Filewalker
             psi.Verb = "open";
 
             System.Diagnostics.Process.Start(psi);
+        }
+
+        private void RefreshFileList()
+        {
+            try
+            {
+                EnumerateFiles();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n\n" + ex.StackTrace,
+                    "Unholy Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
     }
 }
