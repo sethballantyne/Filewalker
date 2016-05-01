@@ -330,16 +330,7 @@ namespace Filewalker
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show(
-                "Are you sure you wish to exit?",
-                "Continue?",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if(dr == DialogResult.Yes)
-            {
-                Close();
-            }
+            Close();
         }
 
         private void openDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -490,10 +481,24 @@ namespace Filewalker
         {
             try
             {
-                string[] directories = recentDirectories.ToArray();
-                if (directories != null)
+                DialogResult dr = MessageBox.Show(
+                "Are you sure you wish to exit?",
+                "Continue?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+                if (dr == System.Windows.Forms.DialogResult.Yes)
                 {
-                    Registry.SetValue(registryKey, "Directories", directories);
+                    string[] directories = recentDirectories.ToArray();
+                    if (directories != null)
+                    {
+                        Registry.SetValue(registryKey, "Directories", directories);
+                    }
+                }
+                else
+                {
+                    e.Cancel = true;
+                    Activate();
                 }
             }
             catch
