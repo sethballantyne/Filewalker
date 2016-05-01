@@ -46,6 +46,12 @@ namespace Filewalker
         public FileCopy()
         {
             InitializeComponent();
+
+            // setting here instead of the designer 
+            // because the values in the designer are meant
+            // to be helpers.
+            taskLabel.Text = "";
+            fileLabel.Text = "";
         }
 
         /// <summary>

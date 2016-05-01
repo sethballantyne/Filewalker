@@ -47,6 +47,11 @@ namespace Filewalker
         public DeleteFilesDlg()
         {
             InitializeComponent();
+
+            // setting here instead of the designer 
+            // because the values in the designer are meant
+            // to be helpers.
+            label.Text = "";
         }
 
         /// <summary>
