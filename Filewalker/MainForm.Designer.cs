@@ -54,12 +54,22 @@ namespace Filewalker
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chooseDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.recentDirectoriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+            this.editDeleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.setPathToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.refreshToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -78,10 +88,6 @@ namespace Filewalker
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.copyFileFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.setPathToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.refreshToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.chooseDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -92,6 +98,7 @@ namespace Filewalker
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.toolStripMenuItem4,
             this.toolStripMenuItem1,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
@@ -105,22 +112,78 @@ namespace Filewalker
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.chooseDirectoryToolStripMenuItem,
             this.toolStripMenuItem2,
+            this.recentDirectoriesToolStripMenuItem,
+            this.toolStripSeparator4,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "&File";
             // 
+            // chooseDirectoryToolStripMenuItem
+            // 
+            this.chooseDirectoryToolStripMenuItem.Image = global::Filewalker.Properties.Resources.searchFiles;
+            this.chooseDirectoryToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.chooseDirectoryToolStripMenuItem.Name = "chooseDirectoryToolStripMenuItem";
+            this.chooseDirectoryToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.chooseDirectoryToolStripMenuItem.Text = "&Choose Directory";
+            this.chooseDirectoryToolStripMenuItem.Click += new System.EventHandler(this.chooseDirectoryToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(162, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(166, 6);
+            // 
+            // recentDirectoriesToolStripMenuItem
+            // 
+            this.recentDirectoriesToolStripMenuItem.Name = "recentDirectoriesToolStripMenuItem";
+            this.recentDirectoriesToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.recentDirectoriesToolStripMenuItem.Text = "Recent Directories";
+            this.recentDirectoriesToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.recentDirectoriesToolStripMenuItem_DropDownItemClicked);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(166, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.editDeleteToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.selectAllToolStripMenuItem});
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(39, 20);
+            this.toolStripMenuItem4.Text = "&Edit";
+            // 
+            // editDeleteToolStripMenuItem
+            // 
+            this.editDeleteToolStripMenuItem.Enabled = false;
+            this.editDeleteToolStripMenuItem.Name = "editDeleteToolStripMenuItem";
+            this.editDeleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
+            this.editDeleteToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.editDeleteToolStripMenuItem.Text = "&Delete";
+            this.editDeleteToolStripMenuItem.Click += new System.EventHandler(this.editDeleteToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(161, 6);
+            // 
+            // selectAllToolStripMenuItem
+            // 
+            this.selectAllToolStripMenuItem.Enabled = false;
+            this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+            this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.selectAllToolStripMenuItem.Text = "Select &All";
+            this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -129,6 +192,16 @@ namespace Filewalker
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(44, 20);
             this.toolStripMenuItem1.Text = "&View";
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Enabled = false;
+            this.refreshToolStripMenuItem.Image = global::Filewalker.Properties.Resources.Refresh;
+            this.refreshToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.refreshToolStripMenuItem.Text = "&Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -156,6 +229,29 @@ namespace Filewalker
             this.toolStrip.Size = new System.Drawing.Size(855, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip1";
+            // 
+            // setPathToolStripButton
+            // 
+            this.setPathToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.setPathToolStripButton.Image = global::Filewalker.Properties.Resources.searchFiles;
+            this.setPathToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.setPathToolStripButton.Name = "setPathToolStripButton";
+            this.setPathToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.setPathToolStripButton.Text = "Set the current directory";
+            this.setPathToolStripButton.ToolTipText = "Set the current directory";
+            this.setPathToolStripButton.Click += new System.EventHandler(this.setPathToolStripButton_Click);
+            // 
+            // refreshToolStripButton
+            // 
+            this.refreshToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.refreshToolStripButton.Enabled = false;
+            this.refreshToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshToolStripButton.Image")));
+            this.refreshToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.refreshToolStripButton.Name = "refreshToolStripButton";
+            this.refreshToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.refreshToolStripButton.Text = "Refresh";
+            this.refreshToolStripButton.ToolTipText = "Refresh";
+            this.refreshToolStripButton.Click += new System.EventHandler(this.refreshToolStripButton_Click);
             // 
             // toolStripSeparator1
             // 
@@ -279,47 +375,6 @@ namespace Filewalker
             this.imageList.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // setPathToolStripButton
-            // 
-            this.setPathToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.setPathToolStripButton.Image = global::Filewalker.Properties.Resources.searchFiles;
-            this.setPathToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.setPathToolStripButton.Name = "setPathToolStripButton";
-            this.setPathToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.setPathToolStripButton.Text = "Set the current directory";
-            this.setPathToolStripButton.ToolTipText = "Set the current directory";
-            this.setPathToolStripButton.Click += new System.EventHandler(this.setPathToolStripButton_Click);
-            // 
-            // refreshToolStripButton
-            // 
-            this.refreshToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.refreshToolStripButton.Enabled = false;
-            this.refreshToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("refreshToolStripButton.Image")));
-            this.refreshToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.refreshToolStripButton.Name = "refreshToolStripButton";
-            this.refreshToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.refreshToolStripButton.Text = "Refresh";
-            this.refreshToolStripButton.ToolTipText = "Refresh";
-            this.refreshToolStripButton.Click += new System.EventHandler(this.refreshToolStripButton_Click);
-            // 
-            // chooseDirectoryToolStripMenuItem
-            // 
-            this.chooseDirectoryToolStripMenuItem.Image = global::Filewalker.Properties.Resources.searchFiles;
-            this.chooseDirectoryToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Fuchsia;
-            this.chooseDirectoryToolStripMenuItem.Name = "chooseDirectoryToolStripMenuItem";
-            this.chooseDirectoryToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.chooseDirectoryToolStripMenuItem.Text = "&Choose Directory";
-            this.chooseDirectoryToolStripMenuItem.Click += new System.EventHandler(this.chooseDirectoryToolStripMenuItem_Click);
-            // 
-            // refreshToolStripMenuItem
-            // 
-            this.refreshToolStripMenuItem.Enabled = false;
-            this.refreshToolStripMenuItem.Image = global::Filewalker.Properties.Resources.Refresh;
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
-            this.refreshToolStripMenuItem.Text = "&Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -332,6 +387,8 @@ namespace Filewalker
             this.MainMenuStrip = this.menuStrip;
             this.Name = "MainForm";
             this.Text = "Filewalker";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.toolStrip.ResumeLayout(false);
@@ -377,6 +434,12 @@ namespace Filewalker
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.ColumnHeader dateColumnHeader;
         private System.Windows.Forms.FolderBrowserDialog copyFileFolderBrowserDialog;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem editDeleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem recentDirectoriesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }
 

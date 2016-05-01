@@ -21,7 +21,7 @@
 
 namespace Filewalker
 {
-    partial class FileCopy
+    partial class DeleteFilesDlg
     {
         /// <summary>
         /// Required designer variable.
@@ -49,39 +49,37 @@ namespace Filewalker
         /// </summary>
         private void InitializeComponent()
         {
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.taskProgressBar = new System.Windows.Forms.ProgressBar();
-            this.taskLabel = new System.Windows.Forms.Label();
+            this.label = new System.Windows.Forms.Label();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.fileProgressBar = new System.Windows.Forms.ProgressBar();
-            this.fileLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(12, 43);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(471, 23);
+            this.progressBar.TabIndex = 0;
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(408, 140);
+            this.cancelButton.Location = new System.Drawing.Point(408, 85);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
-            this.cancelButton.TabIndex = 0;
+            this.cancelButton.TabIndex = 1;
             this.cancelButton.Text = "&Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // taskProgressBar
+            // label
             // 
-            this.taskProgressBar.Location = new System.Drawing.Point(12, 99);
-            this.taskProgressBar.Name = "taskProgressBar";
-            this.taskProgressBar.Size = new System.Drawing.Size(471, 23);
-            this.taskProgressBar.TabIndex = 1;
-            // 
-            // taskLabel
-            // 
-            this.taskLabel.AutoSize = true;
-            this.taskLabel.Location = new System.Drawing.Point(12, 83);
-            this.taskLabel.Name = "taskLabel";
-            this.taskLabel.Size = new System.Drawing.Size(106, 13);
-            this.taskLabel.TabIndex = 2;
-            this.taskLabel.Text = "overall progress label";
+            this.label.AutoSize = true;
+            this.label.Location = new System.Drawing.Point(12, 27);
+            this.label.Name = "label";
+            this.label.Size = new System.Drawing.Size(29, 13);
+            this.label.TabIndex = 2;
+            this.label.Text = "label";
             // 
             // backgroundWorker
             // 
@@ -91,38 +89,22 @@ namespace Filewalker
             this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
             this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
             // 
-            // fileProgressBar
-            // 
-            this.fileProgressBar.Location = new System.Drawing.Point(12, 44);
-            this.fileProgressBar.Name = "fileProgressBar";
-            this.fileProgressBar.Size = new System.Drawing.Size(471, 23);
-            this.fileProgressBar.TabIndex = 3;
-            // 
-            // fileLabel
-            // 
-            this.fileLabel.AutoSize = true;
-            this.fileLabel.Location = new System.Drawing.Point(12, 28);
-            this.fileLabel.Name = "fileLabel";
-            this.fileLabel.Size = new System.Drawing.Size(88, 13);
-            this.fileLabel.TabIndex = 4;
-            this.fileLabel.Text = "file progress label";
-            // 
-            // FileCopy
+            // DeleteFilesDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(495, 175);
-            this.Controls.Add(this.fileLabel);
-            this.Controls.Add(this.fileProgressBar);
-            this.Controls.Add(this.taskLabel);
-            this.Controls.Add(this.taskProgressBar);
+            this.ClientSize = new System.Drawing.Size(495, 120);
+            this.Controls.Add(this.label);
             this.Controls.Add(this.cancelButton);
+            this.Controls.Add(this.progressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FileCopy";
-            this.Text = "Copying files...";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FileCopy_FormClosing);
+            this.Name = "DeleteFilesDlg";
+            this.Text = "DeleteFilesDlg";
+            this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DeleteFilesDlg_FormClosing);
+            this.Shown += new System.EventHandler(this.DeleteFilesDlg_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -130,11 +112,9 @@ namespace Filewalker
 
         #endregion
 
+        private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.ProgressBar taskProgressBar;
-        private System.Windows.Forms.Label taskLabel;
+        private System.Windows.Forms.Label label;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
-        private System.Windows.Forms.ProgressBar fileProgressBar;
-        private System.Windows.Forms.Label fileLabel;
     }
 }

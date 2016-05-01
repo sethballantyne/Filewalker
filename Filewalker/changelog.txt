@@ -1,4 +1,13 @@
 ﻿-------------------------------------------------
+-- 1.3
+-------------------------------------------------
+* Multiple files can now be deleted at once.
+* Filewalker will now remember up to 10 previously opened directories. 
+  These can be selected from the "File" menu. 
+* Users can now select all the files displayed in the list view
+  via CTRL+A or by clicking "Select All" under the "Edit" menu. 
+
+-------------------------------------------------
 -- 1.2
 -------------------------------------------------
 * When refreshing or selecting a new directory, the listview won't remove

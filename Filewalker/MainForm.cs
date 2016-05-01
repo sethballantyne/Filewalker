@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace Filewalker
 {
@@ -37,6 +38,8 @@ namespace Filewalker
     {
         //
         ListViewColumnSorter listViewColumnSorter = new ListViewColumnSorter();
+
+        FixedSizedList<string> recentDirectories = new FixedSizedList<string>(10);
 
         //
         string selectedDirectory = null;
@@ -47,6 +50,9 @@ namespace Filewalker
         //
         int fileCount = 0;
 
+        const string registryKey = "HKEY_CURRENT_USER" + "\\" + "Filewalker";
+
+
         public MainForm()
         {
             InitializeComponent();
@@ -54,7 +60,7 @@ namespace Filewalker
             // doing it here instead of the form designer so the
             // control is more easily visible in the designer.
             toolStripStatusLabel.Text = "";
-
+           
             listView.ListViewItemSorter = listViewColumnSorter;
             listView.SmallImageList = imageList;
         }
@@ -70,10 +76,13 @@ namespace Filewalker
                 {
                     selectedDirectory = folderBrowserDialog.SelectedPath;
 
+                    UpdateRecentDirectoryMenuItems();
+
                     EnumerateFiles();
 
                     refreshToolStripMenuItem.Enabled = true;
                     refreshToolStripButton.Enabled = true;
+                    selectAllToolStripMenuItem.Enabled = true;
                 }
             }
             catch(Exception e)
@@ -83,6 +92,26 @@ namespace Filewalker
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        private void UpdateRecentDirectoryMenuItems()
+        {
+            // if this path has been opened before, we don't want
+            // to display it twice. 
+            for (int i = 0; i < recentDirectories.Count; i++)
+            {
+                if (recentDirectories[i] == selectedDirectory)
+                {
+                    recentDirectories.RemoveAt(i);
+                }
+            }
+
+            // need a trailing directory seperator for it to be
+            // a valid URI. If you don't add this, the check will fail
+            // in MainForm_Load and no menu items will appear.
+            recentDirectories.Add(selectedDirectory + "//");
+
+            CreateRecentDirectoryMenuItems();
         }
 
         /// <summary>
@@ -115,52 +144,7 @@ namespace Filewalker
             catch
             {
                 throw;
-            }
-            
-            
-
-            //DirectoryInfo dirInfo = new DirectoryInfo(folderBrowserDialog.SelectedPath);
-
-            //FileInfo[] files = dirInfo.GetFiles("*", SearchOption.AllDirectories);
-
-            //// + 1 because when the user sets a directory that doesn't contain 
-            //// any subdirectories, dirInfo.GetDirectories().Length will return 0.
-            //this.directoryCount = dirInfo.GetDirectories().Length + 1;
-            //this.fileCount = files.Length;
-
-            //string[] items = new string[listView.Columns.Count];
-
-            //List<ListViewItem> listViewItems = new List<ListViewItem>(files.Length);
-
-            //listView.Items.Clear();
-            //foreach (FileInfo file in files)
-            //{
-            //    string filePath = file.DirectoryName + @"\" + file.Name;
-
-            //    items[0] = file.Name;
-            //    items[1] = file.DirectoryName;
-            //    items[2] = FileSizeConverter.Format(file.Length);
-            //    items[3] = File.GetCreationTime(filePath).ToString();
-                
-
-            //    string fileExtension = Path.GetExtension(filePath);
-            //    if(imageList.Images[fileExtension] == null)
-            //    {
-            //        Icon associatedIcon = ShellIcon.GetSmallIcon(file.DirectoryName + "\\" + file.Name);
-                    
-            //        // make sure we actually retrieved the files icon; passing a null
-            //        // value to the image list will result in an exception being thrown.
-            //        if (associatedIcon != null)
-            //            imageList.Images.Add(fileExtension, associatedIcon);
-            //    }
-                
-            //    //listViewItems.Add(new ListViewItem()
-            //    listViewItems.Add(new ListViewItem(items, fileExtension));
-            //}
-
-            //listView.Items.AddRange(listViewItems.ToArray());
-
-            
+            }     
         }
 
         /// <summary>
@@ -173,6 +157,8 @@ namespace Filewalker
             {
                 contextMenuStrip.Items[i].Enabled = enabled;
             }
+
+            editDeleteToolStripMenuItem.Enabled = enabled;
         }
 
         /// <summary>
@@ -181,11 +167,7 @@ namespace Filewalker
         /// <returns></returns>
         private string GetSelectedFilePath()
         {
-            string filePath = listView.SelectedItems[0].SubItems[1].Text +
-                "\\" +
-                listView.SelectedItems[0].Text;
-
-            return filePath;
+            return Path.Combine(listView.SelectedItems[0].SubItems[1].Text, listView.SelectedItems[0].Text);
         }
 
         /// <summary>
@@ -260,11 +242,9 @@ namespace Filewalker
             List<FilePath> filesToCopy = new List<FilePath>();
 
             
-
             // directory path + filename
-            string pathOfFileToCopy = listView.SelectedItems[0].SubItems[1].Text + 
-                "\\" +
-                listView.SelectedItems[0].Text;
+            string pathOfFileToCopy = Path.Combine(listView.SelectedItems[0].SubItems[1].Text,
+                listView.SelectedItems[0].Text);
 
             // TODO: Move this to its own thread, indicate file copy progress.
             //saveFileDialog.FileName = listView.SelectedItems[0].Text;
@@ -279,7 +259,7 @@ namespace Filewalker
 
                     // verify a file in the selected directory doesn't contain
                     // a file of the same name.
-                    if (File.Exists(copyFileFolderBrowserDialog.SelectedPath + "\\" + filename))
+                    if (File.Exists(Path.Combine(copyFileFolderBrowserDialog.SelectedPath, filename)))
                     {
                         string message = String.Format("The file {0} exists in the specified directory. Overwrite?", filename);
                        
@@ -299,46 +279,23 @@ namespace Filewalker
                     filesToCopy.Add(new FilePath(selectedItem.Text,
                         selectedItem.SubItems[1].Text));
 
-                    totalBytes += new FileInfo(directoryPath + "\\" + filename).Length;
+                    totalBytes += new FileInfo(Path.Combine(directoryPath, filename)).Length;
 
                 }
 
-                FileCopy fileCopyDlg = new FileCopy(filesToCopy.ToArray(), @"C:\Users\Seth\Desktop\test", totalBytes);
+                FileCopy fileCopyDlg = new FileCopy(filesToCopy.ToArray(), 
+                    copyFileFolderBrowserDialog.SelectedPath, totalBytes);
+
                 if(fileCopyDlg.ShowDialog() == DialogResult.OK)
                 {
                     MessageBox.Show("Done");
                 }
-                //File.Copy(pathOfFileToCopy, saveFileDialog.FileName, true);
-
-                //MessageBox.Show("File Copied.");
             }
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(listView.SelectedItems.Count > 0)
-            {
-                DialogResult dialogResult = MessageBox.Show(
-                    "Delete selected file?",
-                    "Confirm action",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if(dialogResult == DialogResult.Yes)
-                {
-                    string pathOfFileToDelete = GetSelectedFilePath();
-
-                    File.Delete(pathOfFileToDelete);
-
-                    listView.Items.Remove(listView.SelectedItems[0]);
-
-                    fileCount--;
-
-                    MessageBox.Show("File deleted.");
-
-                    UpdateStatusLabel();
-                }
-            }
+            DeleteFiles();
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
@@ -395,6 +352,9 @@ namespace Filewalker
             System.Diagnostics.Process.Start(psi);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void RefreshFileList()
         {
             try
@@ -407,6 +367,153 @@ namespace Filewalker
                     "Unholy Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
+            }
+        }
+
+        private void editDeleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteFiles();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void DeleteFiles()
+        {
+            try
+            {
+                if (listView.SelectedItems.Count > 0)
+                {
+                    DialogResult dialogResult = MessageBox.Show(
+                        "Delete selected files?",
+                        "Confirm action",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        List<ListViewItem> pathsAndIndices = new List<ListViewItem>();
+
+                        foreach (ListViewItem listViewItem in listView.SelectedItems)
+                        {
+                            pathsAndIndices.Add(listViewItem);
+                        }
+
+                        DeleteFilesDlg deleteFilesDlg = new DeleteFilesDlg(pathsAndIndices.ToArray());
+
+                        if (deleteFilesDlg.ShowDialog() == DialogResult.OK)
+                        {
+                            for (int i = 0; i < pathsAndIndices.Count; i++)
+                            {
+                                listView.Items.Remove(pathsAndIndices[i]);
+                                fileCount--;
+                            }
+                        }
+
+                        UpdateStatusLabel();
+
+                        // if there's nothing select, no point in using this.
+                        // Disabled for sake of polish. 
+                        if(listView.Items.Count == 0)
+                        {
+                            selectAllToolStripMenuItem.Enabled = false;
+                        }
+                    }
+                }
+               
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Unholy Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+        }
+
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for(int i = 0; i < listView.Items.Count; i++)
+            {
+                listView.Items[i].Selected = true;
+            }
+        }
+
+        private void recentDirectoriesToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            try
+            {
+                selectedDirectory = e.ClickedItem.Text;
+
+                UpdateRecentDirectoryMenuItems();
+
+                EnumerateFiles();
+
+                refreshToolStripMenuItem.Enabled = true;
+                refreshToolStripButton.Enabled = true;
+                selectAllToolStripMenuItem.Enabled = true;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Unholy Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // Arrays of strings are stored automatically as 
+            // MultiString. Similarly, arrays of Byte are stored
+            // automatically as Binary.
+            string[] registryValues = (string[])Registry.GetValue(registryKey,
+            "Directories", null);
+
+            if (registryValues != null)
+            {
+                List<string> verifiedPaths = new List<string>();
+          
+                // verify we're not about to display garbage strings
+                for(int i = 0; i < registryValues.Length; i++)
+                {
+                    if (Uri.IsWellFormedUriString(registryValues[i], UriKind.RelativeOrAbsolute))
+                    {
+                        verifiedPaths.Add(registryValues[i]);
+                    }
+                }
+
+                recentDirectories.AddRange(verifiedPaths.ToArray());
+
+                CreateRecentDirectoryMenuItems();
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                string[] directories = recentDirectories.ToArray();
+                if (directories != null)
+                {
+                    Registry.SetValue(registryKey, "Directories", directories);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private void recentDirectoriesToolStripMenuItem_MouseHover(object sender, EventArgs e)
+        {
+            
+        }
+
+        void CreateRecentDirectoryMenuItems()
+        {
+            recentDirectoriesToolStripMenuItem.DropDownItems.Clear();
+
+            foreach (string s in recentDirectories)
+            {
+                recentDirectoriesToolStripMenuItem.DropDownItems.Add(s);
             }
         }
     }
