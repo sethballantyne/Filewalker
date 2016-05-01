@@ -100,6 +100,7 @@ namespace Filewalker
             this.Controls.Add(this.progressBar1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FileEnumerator";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FileEnumerator";
             this.Shown += new System.EventHandler(this.FileEnumerator_Shown);

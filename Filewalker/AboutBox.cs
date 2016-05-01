@@ -35,10 +35,11 @@ namespace Filewalker
         public AboutBox()
         {
             string programNameVersion = String.Format(
-                "{0} {1}.{2}", 
+                "{0} {1}.{2}.{3}", 
                 AssemblyProduct,
                 Assembly.GetExecutingAssembly().GetName().Version.Major,
-                Assembly.GetExecutingAssembly().GetName().Version.Minor
+                Assembly.GetExecutingAssembly().GetName().Version.Minor,
+                Assembly.GetExecutingAssembly().GetName().Version.Build
                 );
 
 
