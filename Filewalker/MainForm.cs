@@ -437,19 +437,22 @@ namespace Filewalker
         {
             try
             {
-                selectedDirectory = e.ClickedItem.Text;
+                if (e.ClickedItem.Text != "(none)")
+                {
+                    selectedDirectory = e.ClickedItem.Text;
 
-                UpdateRecentDirectoryMenuItems();
+                    UpdateRecentDirectoryMenuItems();
 
-                EnumerateFiles();
+                    EnumerateFiles();
 
-                refreshToolStripMenuItem.Enabled = true;
-                refreshToolStripButton.Enabled = true;
+                    refreshToolStripMenuItem.Enabled = true;
+                    refreshToolStripButton.Enabled = true;
 
-                if (listView.Items.Count > 0)
-                    selectAllToolStripMenuItem.Enabled = true;
-                else
-                    selectAllToolStripMenuItem.Enabled = false;
+                    if (listView.Items.Count > 0)
+                        selectAllToolStripMenuItem.Enabled = true;
+                    else
+                        selectAllToolStripMenuItem.Enabled = false;
+                }
             }
             catch(Exception ex)
             {
@@ -469,9 +472,9 @@ namespace Filewalker
             if (registryValues != null)
             {
                 List<string> verifiedPaths = new List<string>();
-          
+
                 // verify we're not about to display garbage strings
-                for(int i = 0; i < registryValues.Length; i++)
+                for (int i = 0; i < registryValues.Length; i++)
                 {
                     if (IsValidPath(registryValues[i]))
                     {
@@ -482,6 +485,10 @@ namespace Filewalker
                 recentDirectories.AddRange(verifiedPaths.ToArray());
 
                 CreateRecentDirectoryMenuItems();
+            }
+            else
+            {
+                recentDirectoriesToolStripMenuItem.DropDownItems.Add("(none)");
             }
         }
 
@@ -525,6 +532,11 @@ namespace Filewalker
             foreach (string s in recentDirectories)
             {
                 recentDirectoriesToolStripMenuItem.DropDownItems.Add(s);
+            }
+
+            if(recentDirectoriesToolStripMenuItem.DropDownItems.Count == 0)
+            {
+                recentDirectoriesToolStripMenuItem.DropDownItems.Add("(none)");
             }
         }
 
