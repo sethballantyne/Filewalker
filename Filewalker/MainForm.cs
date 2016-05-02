@@ -82,7 +82,11 @@ namespace Filewalker
 
                     refreshToolStripMenuItem.Enabled = true;
                     refreshToolStripButton.Enabled = true;
-                    selectAllToolStripMenuItem.Enabled = true;
+
+                    if (listView.Items.Count > 0)
+                        selectAllToolStripMenuItem.Enabled = true;
+                    else
+                        selectAllToolStripMenuItem.Enabled = false;
                 }
             }
             catch(Exception e)
@@ -94,6 +98,9 @@ namespace Filewalker
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void UpdateRecentDirectoryMenuItems()
         {
             // if this path has been opened before, we don't want
@@ -106,10 +113,7 @@ namespace Filewalker
                 }
             }
 
-            // need a trailing directory seperator for it to be
-            // a valid URI. If you don't add this, the check will fail
-            // in MainForm_Load and no menu items will appear.
-            recentDirectories.Add(selectedDirectory + "//");
+            recentDirectories.Add(selectedDirectory);
 
             CreateRecentDirectoryMenuItems();
         }
@@ -441,7 +445,11 @@ namespace Filewalker
 
                 refreshToolStripMenuItem.Enabled = true;
                 refreshToolStripButton.Enabled = true;
-                selectAllToolStripMenuItem.Enabled = true;
+
+                if (listView.Items.Count > 0)
+                    selectAllToolStripMenuItem.Enabled = true;
+                else
+                    selectAllToolStripMenuItem.Enabled = false;
             }
             catch(Exception ex)
             {
@@ -465,7 +473,7 @@ namespace Filewalker
                 // verify we're not about to display garbage strings
                 for(int i = 0; i < registryValues.Length; i++)
                 {
-                    if (Uri.IsWellFormedUriString(registryValues[i], UriKind.RelativeOrAbsolute))
+                    if (IsValidPath(registryValues[i]))
                     {
                         verifiedPaths.Add(registryValues[i]);
                     }
@@ -507,11 +515,9 @@ namespace Filewalker
             }
         }
 
-        private void recentDirectoriesToolStripMenuItem_MouseHover(object sender, EventArgs e)
-        {
-            
-        }
-
+        /// <summary>
+        /// 
+        /// </summary>
         void CreateRecentDirectoryMenuItems()
         {
             recentDirectoriesToolStripMenuItem.DropDownItems.Clear();
@@ -519,6 +525,38 @@ namespace Filewalker
             foreach (string s in recentDirectories)
             {
                 recentDirectoriesToolStripMenuItem.DropDownItems.Add(s);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        bool IsValidPath(string path)
+        {
+            try
+            {
+                // might seem a little wasteful, but DirectoryInfo throws
+                // exceptions when a directory path contains illegal characters,
+                // if path is null, the user doesn't have the required permission
+                // to access the path or is too long. One line of code is easier.
+                DirectoryInfo dirInfo = new DirectoryInfo(path);
+                
+                // All paths must contain the drive they're located on; 
+                // they're considered invalid if they don't. 
+                if(Char.IsLetter(path[0]) && 
+                   path[1] == ':' && 
+                   path[2] == '\\')
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

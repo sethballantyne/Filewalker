@@ -46,11 +46,6 @@ namespace Filewalker
         public FileEnumerator()
         {
             InitializeComponent();
-
-            // setting here instead of the designer 
-            // because the values in the designer are meant
-            // to be helpers.
-            label.Text = "";
         }
 
         public FileEnumerator(string selectedPath, ImageList imageList) : this()
