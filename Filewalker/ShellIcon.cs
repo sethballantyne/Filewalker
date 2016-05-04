@@ -38,14 +38,43 @@ namespace Filewalker
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes, ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
 
+        /// <summary>
+        /// Stores information about a file object; should be used in conjunction with
+        /// the SHGetFileInfo function.s
+        /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         public struct SHFILEINFO
         {
+            /// <summary>
+            /// Handle to the icon file. When the icon is no longer needed
+            /// it must be destroyed with DestroyIcon.
+            /// </summary>
             public IntPtr hIcon;
+
+            /// <summary>
+            /// The index of the icon image within the system image list.
+            /// </summary>
             public IntPtr iIcon;
+
+            /// <summary>
+            /// A value that indicates the icons attributes. 
+            /// We don't use this but it's here for completeness.
+            /// </summary>
             public uint dwAttributes;
+
+            /// <summary>
+            /// The icons name as it appears in the Windows Shell,
+            /// or the path and filename of the file that contains
+            /// the icon representing the file.
+            /// Defined as TCHAR[MAX_PATH] in the Win32 API.
+            /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
             public string szDisplayName;
+
+            /// <summary>
+            /// Describes the type of file. Defined as TCHAR[80] 
+            /// in the Win32 API. 
+            /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
             public string szTypeName;
         }
