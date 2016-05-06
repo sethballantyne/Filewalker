@@ -28,16 +28,23 @@ using System.Threading.Tasks;
 namespace Filewalker
 {
     /// <summary>
-    /// 
+    /// Used to sort the filesizes in the list view. The strings FormattedFileSizeComparer
+    /// sort must be formatted, ie: 1.2 MB  345 B. T
     /// </summary>
+    /// <remarks>The strings that FormattedFileSizeComparer sort must be specifically formatted:
+    /// 1.2 MB  345 B. The Comparer method attempts to read the measurement characters(MB, B, KB) 
+    /// so they have to be present.
+    /// </remarks>
     class FormattedFileSizeComparer : System.Collections.IComparer
     {
         /// <summary>
-        /// 
+        /// Used by the listview to sort the filesizes.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <returns></returns>
+        /// <returns><para/>less than 0 if x is less than y
+        /// <para/>0 if x equals y
+        /// <para/>1 if x is greater than y</returns>
         public int Compare(object x, object y)
         {
             string xText = (string)x;
