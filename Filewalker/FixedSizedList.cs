@@ -28,15 +28,18 @@ using System.Threading.Tasks;
 namespace Filewalker
 {
     /// <summary>
-    /// 
+    /// Represents a list of fixed size. When the max number of items is added
+    /// to the list, the next item to be added will be inserted to the top of the list,
+    /// while the bottom item is removed. The list never exceeds the specified number of items.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of element contained in the list.</typeparam>
     public class FixedSizedList<T> : IEnumerable<T>, ICollection<T>
     {
-        //
         protected List<T> items;
 
-        //
+        /// <summary>
+        /// The maximum number of items that can be stored in the list
+        /// </summary>
         protected int maxSize = 0;
 
         /// <summary>
@@ -45,19 +48,28 @@ namespace Filewalker
         /// <param name="size"></param>
         public FixedSizedList(int size)
         {
-            items = new List<T>(size);
-            maxSize = size;
+            try
+            {
+                items = new List<T>(size);
+                maxSize = size;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         /// <summary>
-        /// 
+        /// Initialises the list with the specified items. The maximum number of items
+        /// the list can contain is set to the length of <i>items</i>.
         /// </summary>
-        /// <param name="items"></param>
+        /// <param name="items">The items to fill the list with.</param>
+        /// <exception cref="System.ArgumentNullException">An element</exception>
         public FixedSizedList(T[] items) : this(items.Length)
         {
             try
             {
-                this.items.AddRange(items);
+                AddRange(items);
                 maxSize = items.Length;
             }
             catch
@@ -67,7 +79,7 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Returns an enumerator that iterates through the list.
         /// </summary>
         /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
@@ -76,7 +88,7 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Returns an enumerator that iterates through the list.
         /// </summary>
         /// <returns></returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -85,12 +97,13 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Adds an object to the start of the list.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">The object to add to the list.</param>
+        /// <exception cref="System.ArgumentNullException"><i>item</i> is <b>null</b>.</exception>
         public void Add(T item)
         {
-            if(item == null)
+            if (item == null)
             {
                 throw new ArgumentNullException();
             }
@@ -104,7 +117,7 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Removes all items from the list.
         /// </summary>
         void ICollection<T>.Clear()
         {
@@ -112,20 +125,24 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Determines whether the list contains a specified item.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <param name="item">the item to search for.</param>
+        /// <returns>true if the item is present in the list, otherwise false.</returns>
         bool ICollection<T>.Contains(T item)
         {
             return items.Contains(item);
         }
 
         /// <summary>
-        /// 
+        /// Copies the list to an array, starting at the specified element
         /// </summary>
-        /// <param name="array"></param>
-        /// <param name="arrayIndex"></param>
+        /// <param name="array">The array that is the destination of the elements copied from the list</param>
+        /// <param name="arrayIndex">The position in the array to start copying from.</param>
+        /// <exception cref="System.ArgumentNullException"><i>array</i> is <b>null</b>.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException"><i>arrayIndex</i> is less than 0.</exception>
+        /// <exception cref="System.ArgumentException">Not enough elements in <i>array</i> to make the 
+        /// copy.</exception>
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
             try
@@ -139,9 +156,9 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Returns the number of items in the list.
         /// </summary>
-        public virtual int Count
+        public int Count
         {
             get { return items.Count; }
         }
@@ -155,20 +172,21 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Removes the first occurance of the specified object from the list.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <param name="item">the item to remove.</param>
+        /// <returns>true if the item is successfully removed, otherwise. False is 
+        /// also returned if the item wasn't found.</returns>
         bool ICollection<T>.Remove(T item)
         {
            return items.Remove(item);
         }
 
         /// <summary>
-        /// 
+        /// Removes the item at the specified index.
         /// </summary>
         /// <param name="index"></param>
-        /// <returns></returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">index refers to an element that doesn't exist</exception>
         public void RemoveAt(int index)
         {
             try
@@ -182,7 +200,7 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Copies the elements of the list to a new array.
         /// </summary>
         /// <returns></returns>
         public T[] ToArray()
@@ -190,11 +208,29 @@ namespace Filewalker
             return items.ToArray();
         }
 
+        /// <summary>
+        /// Adds the specified array of items to the list
+        /// </summary>
+        /// <param name="items">The array of items to add to the list. Items are addded at the start
+        /// of the list, not the end.</param>
+        /// <exception cref="System.ArgumentNullException">An item in the array contains a null element,
+        /// or null has been passed as an argument.</exception>
+        /// <remarks>items </remarks>
         public void AddRange(T[] items)
         {
+            if (items == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             try
             {
-                this.items.AddRange(items);
+                
+                // not the most efficient way
+                for (int i = 0; i < items.Length; i++)
+                {
+                    Add(items[i]);
+                }
             }
             catch
             {
@@ -206,11 +242,26 @@ namespace Filewalker
         /// 
         /// </summary>
         /// <param name="index"></param>
-        /// <returns></returns>
-        public virtual T this[int index]
+        /// <returns>The item at the specified index</returns>
+        /// <exception cref="System.IndexOutOfRangeException"><i>index</i> refers to an element that doesn't exist.</exception>
+        public T this[int index]
         {
-            get { return items[index]; }
-            set { items[index] = value; }
+            get 
+            {
+                if (index < 0 || index > maxSize)
+                    throw new IndexOutOfRangeException();
+
+                return items[index]; 
+            }
+            set 
+            {
+                if (index < 0 || index > maxSize)
+                {
+                    throw new IndexOutOfRangeException();
+                }
+
+                items[index] = value; 
+            }
         }
     }
 }
