@@ -43,9 +43,11 @@ namespace Filewalker
         protected int maxSize = 0;
 
         /// <summary>
-        /// 
+        /// Initialises a new instance of the list, setting the maximum number of items it will hold
+        /// to <i>size</i>.
         /// </summary>
-        /// <param name="size"></param>
+        /// <param name="size">The maximum number of elements the list will contain.</param>
+        /// <exception cref="System.ArgumentOutOfRangeException"><i>size</i> is less than 0.</exception>
         public FixedSizedList(int size)
         {
             try
@@ -64,7 +66,8 @@ namespace Filewalker
         /// the list can contain is set to the length of <i>items</i>.
         /// </summary>
         /// <param name="items">The items to fill the list with.</param>
-        /// <exception cref="System.ArgumentNullException">An element</exception>
+        /// <exception cref="System.ArgumentNullException">An element in the array evaluates to <b>null</b>,
+        /// or <i>items</i> itself is <b>null</b>.</exception>
         public FixedSizedList(T[] items) : this(items.Length)
         {
             try
