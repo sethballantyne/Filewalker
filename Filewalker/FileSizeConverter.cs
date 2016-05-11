@@ -33,10 +33,13 @@ namespace Filewalker
     public static class FileSizeConverter
     {
         /// <summary>
-        /// 
+        /// Takes a value in bytes and converts it to a formatted string.
         /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
+        /// <param name="bytes">the amount in bytes to format.</param>
+        /// <returns>A formatted string using the appropriate measurement. 
+        /// Example: if <i>bytes</i> contains 300 the string returned will be <i>300 B</i>.
+        /// if it contained 40324, the returned string would be <i>40.32 KB</i>.
+        /// </returns>
         public static string Format(long bytes)
         {
             double result;
@@ -59,6 +62,7 @@ namespace Filewalker
             // Assume the file is Megabytes in size.
             else
             {
+                // 1MB = 1,048,576 bytes
                 result = (double) bytes / 1048576;
                 str = String.Format("{0:F}", result);
                 return str + " MB";

@@ -49,28 +49,28 @@ namespace Filewalker
         /// </summary>
         private void InitializeComponent()
         {
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.label = new System.Windows.Forms.Label();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.cancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // progressBar1
+            // progressBar
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 45);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(391, 23);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progressBar1.TabIndex = 1;
+            this.progressBar.Location = new System.Drawing.Point(12, 45);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(391, 23);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+            this.progressBar.TabIndex = 1;
             // 
-            // label1
+            // label
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 29);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Processing files...";
+            this.label.AutoSize = true;
+            this.label.Location = new System.Drawing.Point(12, 29);
+            this.label.Name = "label";
+            this.label.Size = new System.Drawing.Size(89, 13);
+            this.label.TabIndex = 2;
+            this.label.Text = "Processing files...";
             // 
             // backgroundWorker
             // 
@@ -96,10 +96,11 @@ namespace Filewalker
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(415, 118);
             this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.label);
+            this.Controls.Add(this.progressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FileEnumerator";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FileEnumerator";
             this.Shown += new System.EventHandler(this.FileEnumerator_Shown);
@@ -110,8 +111,8 @@ namespace Filewalker
 
         #endregion
 
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label label;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.Button cancelButton;
     }

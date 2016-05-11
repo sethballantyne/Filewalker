@@ -47,6 +47,11 @@ namespace Filewalker
         public DeleteFilesDlg()
         {
             InitializeComponent();
+
+            // setting here instead of the designer 
+            // because the values in the designer are meant
+            // to be helpers.
+            label.Text = "";
         }
 
         /// <summary>
@@ -65,6 +70,8 @@ namespace Filewalker
             {
                 currentIndex = i;
 
+                // Allow the user to cancel. If you don't do this, clicking cancel won't
+                // do anything!
                 if(backgroundWorker.CancellationPending)
                 {
                     e.Cancel = true;
@@ -116,6 +123,7 @@ namespace Filewalker
 
         private void DeleteFilesDlg_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // if backgroundWorker_DoWork is running, cancel it.
             if(backgroundWorker.IsBusy)
             {
                 backgroundWorker.CancelAsync();

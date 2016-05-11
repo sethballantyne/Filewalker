@@ -121,6 +121,7 @@ namespace Filewalker
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FileCopy";
+            this.ShowInTaskbar = false;
             this.Text = "Copying files...";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FileCopy_FormClosing);
             this.ResumeLayout(false);

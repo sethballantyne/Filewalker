@@ -101,7 +101,8 @@ namespace Filewalker
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "DeleteFilesDlg";
-            this.Text = "DeleteFilesDlg";
+            this.ShowInTaskbar = false;
+            this.Text = "Deleting files...";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DeleteFilesDlg_FormClosing);
             this.Shown += new System.EventHandler(this.DeleteFilesDlg_Shown);

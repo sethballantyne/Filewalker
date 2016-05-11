@@ -36,20 +36,39 @@ namespace Filewalker
 {
     public partial class MainForm : Form
     {
-        //
+        /// <summary>
+        /// Used to sort the various columns in the list view.
+        /// </summary>
         ListViewColumnSorter listViewColumnSorter = new ListViewColumnSorter();
 
+        /// <summary>
+        /// stores up to 10 recently opened directories; these are used to create
+        /// the child menu items for the "recent directories" menu option.
+        /// </summary>
         FixedSizedList<string> recentDirectories = new FixedSizedList<string>(10);
 
-        //
+        /// <summary>
+        /// stores the directory selected in the Folder browser dialog
+        /// </summary>
         string selectedDirectory = null;
 
-        //
+        /// <summary>
+        /// The number of subdirectories present in the selected 
+        /// directorry; this number also includes the selected directory. 
+        /// </summary>
         int directoryCount = 0;
 
-        //
+        /// <summary>
+        /// the number of files present in the selected directory
+        /// and its subdirectories. 
+        /// </summary>
         int fileCount = 0;
 
+        /// <summary>
+        /// The registry key where recently opened directories will be stored.
+        /// This is used to create at startup the submenu items for the "recent directories"
+        /// menu item.
+        /// </summary>
         const string registryKey = "HKEY_CURRENT_USER" + "\\" + "Filewalker";
 
 
@@ -66,7 +85,8 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Allows the user to select a directory and puts the application
+        /// into a state where the files can be viewed and manipulated. 
         /// </summary>
         private void ChooseDirectory()
         {
@@ -76,13 +96,22 @@ namespace Filewalker
                 {
                     selectedDirectory = folderBrowserDialog.SelectedPath;
 
-                    UpdateRecentDirectoryMenuItems();
+                    // Add the selected directory to the list of recent directories 
+                    UpdateRecentDirectoryMenuItems(selectedDirectory);
 
+                    // Process all the files in the specified dir
                     EnumerateFiles();
+
 
                     refreshToolStripMenuItem.Enabled = true;
                     refreshToolStripButton.Enabled = true;
-                    selectAllToolStripMenuItem.Enabled = true;
+
+                    // There's no point in having a "select all" option
+                    // if there's no files to select. 
+                    if (listView.Items.Count > 0)
+                        selectAllToolStripMenuItem.Enabled = true;
+                    else
+                        selectAllToolStripMenuItem.Enabled = false;
                 }
             }
             catch(Exception e)
@@ -94,28 +123,32 @@ namespace Filewalker
             }
         }
 
-        private void UpdateRecentDirectoryMenuItems()
+        /// <summary>
+        /// Scans the recent directories list, removing items that match <i>dir</i>
+        /// before adding it to the top of the list. 
+        /// </summary>
+        private void UpdateRecentDirectoryMenuItems(string dir)
         {
             // if this path has been opened before, we don't want
             // to display it twice. 
             for (int i = 0; i < recentDirectories.Count; i++)
             {
-                if (recentDirectories[i] == selectedDirectory)
+                if (recentDirectories[i] == dir)
                 {
                     recentDirectories.RemoveAt(i);
                 }
             }
 
-            // need a trailing directory seperator for it to be
-            // a valid URI. If you don't add this, the check will fail
-            // in MainForm_Load and no menu items will appear.
-            recentDirectories.Add(selectedDirectory + "//");
+            recentDirectories.Add(dir);
 
             CreateRecentDirectoryMenuItems();
         }
 
         /// <summary>
-        /// 
+        /// Invokes the File Enumerator dialog. If the Dialog completes its task,
+        /// the EnumerateFiles function adds the files to the list view and updates
+        /// the statusbar with the number of files and directories contained within
+        /// the selected directory.
         /// </summary>
         private void EnumerateFiles()
         {
@@ -123,7 +156,6 @@ namespace Filewalker
             {
                 FileEnumerator fileEnum = new FileEnumerator(selectedDirectory, imageList);
                 DialogResult dr = fileEnum.ShowDialog();
-
 
                 if (dr == DialogResult.OK)
                 {
@@ -162,16 +194,17 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Returns a formatted string containing the absolute path of the file selected
+        /// in the list view. 
         /// </summary>
-        /// <returns></returns>
         private string GetSelectedFilePath()
         {
             return Path.Combine(listView.SelectedItems[0].SubItems[1].Text, listView.SelectedItems[0].Text);
         }
 
         /// <summary>
-        /// 
+        /// Updates the label on the toolstrip so the correct number of files and directories
+        /// present in the list view is displayed. 
         /// </summary>
         private void UpdateStatusLabel()
         {
@@ -241,15 +274,10 @@ namespace Filewalker
 
             List<FilePath> filesToCopy = new List<FilePath>();
 
-            
-            // directory path + filename
-            string pathOfFileToCopy = Path.Combine(listView.SelectedItems[0].SubItems[1].Text,
-                listView.SelectedItems[0].Text);
-
-            // TODO: Move this to its own thread, indicate file copy progress.
             //saveFileDialog.FileName = listView.SelectedItems[0].Text;
             if(copyFileFolderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
+                // the total number of bytes that are to be copied. 
                 long totalBytes = 0;
 
                 foreach (ListViewItem selectedItem in listView.SelectedItems)
@@ -283,9 +311,14 @@ namespace Filewalker
 
                 }
 
+                // Actual copying of files begins here. As soon as the dialog is displayed,
+                // the copying begins.
                 FileCopy fileCopyDlg = new FileCopy(filesToCopy.ToArray(), 
                     copyFileFolderBrowserDialog.SelectedPath, totalBytes);
 
+                // if the DialogResult is OK, the copying was performed successfully.
+                // Any exceptions that are thrown during the copying process are handled
+                // internally by the dialog.
                 if(fileCopyDlg.ShowDialog() == DialogResult.OK)
                 {
                     MessageBox.Show("Done");
@@ -326,24 +359,17 @@ namespace Filewalker
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(GetSelectedFilePath());
+         
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show(
-                "Are you sure you wish to exit?",
-                "Continue?",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if(dr == DialogResult.Yes)
-            {
-                Close();
-            }
+            Close();
         }
 
         private void openDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // open the selected directory in explorer
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.UseShellExecute = true;
             psi.FileName = listView.SelectedItems[0].SubItems[1].Text;
@@ -353,7 +379,10 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Processes the specified directory again, effectively refreshing 
+        /// the contents of the list view. This should never be called if the
+        /// application hasn't been put into a state for manipulating files. Use
+        /// <i>ChooseDirectory()</i> instead.
         /// </summary>
         private void RefreshFileList()
         {
@@ -376,7 +405,8 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Calling this function invokes the delete files dialog, 
+        /// deleting the specified items from disk and removes them from the list view.
         /// </summary>
         private void DeleteFiles()
         {
@@ -392,28 +422,32 @@ namespace Filewalker
 
                     if (dialogResult == DialogResult.Yes)
                     {
-                        List<ListViewItem> pathsAndIndices = new List<ListViewItem>();
+                        // Because apparently a ToArray() is too much to ask.
+                        ListViewItem[] selectedItems = new ListViewItem[listView.SelectedItems.Count];
+                        listView.SelectedItems.CopyTo(selectedItems, 0);
 
-                        foreach (ListViewItem listViewItem in listView.SelectedItems)
-                        {
-                            pathsAndIndices.Add(listViewItem);
-                        }
-
-                        DeleteFilesDlg deleteFilesDlg = new DeleteFilesDlg(pathsAndIndices.ToArray());
+                        // Actual deleting of files begins once the dialog is shown. 
+                        // Any exceptions thrown during the deletion process will be handled
+                        // internally by the dialog. If an exception is caught, it's displayed
+                        // and then treated as if the user has cancelled the task. 
+                        DeleteFilesDlg deleteFilesDlg = new DeleteFilesDlg(selectedItems);
 
                         if (deleteFilesDlg.ShowDialog() == DialogResult.OK)
                         {
-                            for (int i = 0; i < pathsAndIndices.Count; i++)
+                            for (int i = 0; i < selectedItems.Length; i++)
                             {
-                                listView.Items.Remove(pathsAndIndices[i]);
+                                listView.Items.Remove(selectedItems[i]);
+
+                                // make sure the correct number of files displayed
+                                // on the statusstrip.
                                 fileCount--;
                             }
                         }
 
                         UpdateStatusLabel();
 
-                        // if there's nothing select, no point in using this.
-                        // Disabled for sake of polish. 
+                        // if there's nothing to select, no point in having this
+                        // enabled. 
                         if(listView.Items.Count == 0)
                         {
                             selectAllToolStripMenuItem.Enabled = false;
@@ -442,15 +476,29 @@ namespace Filewalker
         {
             try
             {
-                selectedDirectory = e.ClickedItem.Text;
+                // "(none)" is just an dummy menu, used to tell the user
+                // there are no items to display. Obviousy, we don't want
+                // to try and open a folder with said name. 
+                if (e.ClickedItem.Text != "(none)")
+                {
+                    selectedDirectory = e.ClickedItem.Text;
 
-                UpdateRecentDirectoryMenuItems();
+                    // move the selected directory to the top of the list
+                    UpdateRecentDirectoryMenuItems(selectedDirectory);
 
-                EnumerateFiles();
+                    // begin processing the directories contents and set
+                    // the application into a state where the files can be 
+                    // manipulated.
+                    EnumerateFiles();
 
-                refreshToolStripMenuItem.Enabled = true;
-                refreshToolStripButton.Enabled = true;
-                selectAllToolStripMenuItem.Enabled = true;
+                    refreshToolStripMenuItem.Enabled = true;
+                    refreshToolStripButton.Enabled = true;
+
+                    if (listView.Items.Count > 0)
+                        selectAllToolStripMenuItem.Enabled = true;
+                    else
+                        selectAllToolStripMenuItem.Enabled = false;
+                }
             }
             catch(Exception ex)
             {
@@ -461,20 +509,18 @@ namespace Filewalker
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // Arrays of strings are stored automatically as 
-            // MultiString. Similarly, arrays of Byte are stored
-            // automatically as Binary.
+            // returns null if there's no keys
             string[] registryValues = (string[])Registry.GetValue(registryKey,
             "Directories", null);
 
             if (registryValues != null)
             {
                 List<string> verifiedPaths = new List<string>();
-          
+
                 // verify we're not about to display garbage strings
-                for(int i = 0; i < registryValues.Length; i++)
+                for (int i = 0; i < registryValues.Length; i++)
                 {
-                    if (Uri.IsWellFormedUriString(registryValues[i], UriKind.RelativeOrAbsolute))
+                    if (IsValidPath(registryValues[i]))
                     {
                         verifiedPaths.Add(registryValues[i]);
                     }
@@ -482,7 +528,13 @@ namespace Filewalker
 
                 recentDirectories.AddRange(verifiedPaths.ToArray());
 
+                // Create menu items using the values we've read in from the registry
                 CreateRecentDirectoryMenuItems();
+            }
+            else
+            {
+                // no items to add; create a menu item informing the user as such. 
+                recentDirectoriesToolStripMenuItem.DropDownItems.Add("(none)");
             }
         }
 
@@ -490,10 +542,24 @@ namespace Filewalker
         {
             try
             {
-                string[] directories = recentDirectories.ToArray();
-                if (directories != null)
+                DialogResult dr = MessageBox.Show(
+                "Are you sure you wish to exit?",
+                "Continue?",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+                if (dr == System.Windows.Forms.DialogResult.Yes)
                 {
-                    Registry.SetValue(registryKey, "Directories", directories);
+                    string[] directories = recentDirectories.ToArray();
+                    if (directories != null)
+                    {
+                        Registry.SetValue(registryKey, "Directories", directories);
+                    }
+                }
+                else
+                {
+                    e.Cancel = true;
+                    Activate();
                 }
             }
             catch
@@ -502,11 +568,9 @@ namespace Filewalker
             }
         }
 
-        private void recentDirectoriesToolStripMenuItem_MouseHover(object sender, EventArgs e)
-        {
-            
-        }
-
+        /// <summary>
+        /// Creates the menu items that allows users to reopen previously opened directories
+        /// </summary>
         void CreateRecentDirectoryMenuItems()
         {
             recentDirectoriesToolStripMenuItem.DropDownItems.Clear();
@@ -514,6 +578,44 @@ namespace Filewalker
             foreach (string s in recentDirectories)
             {
                 recentDirectoriesToolStripMenuItem.DropDownItems.Add(s);
+            }
+
+            if(recentDirectoriesToolStripMenuItem.DropDownItems.Count == 0)
+            {
+                recentDirectoriesToolStripMenuItem.DropDownItems.Add("(none)");
+            }
+        }
+
+        /// <summary>
+        /// Verifies whether a specified string is an absolute path or not.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns><b>true</b> if <i>path</i> contains a valid absolute path,
+        /// else returns false.</returns>
+        bool IsValidPath(string path)
+        {
+            try
+            {
+                // might seem a little wasteful, but DirectoryInfo throws
+                // exceptions when a directory path contains illegal characters,
+                // if path is null, the user doesn't have the required permission
+                // to access the path or is too long. One line of code is easier.
+                DirectoryInfo dirInfo = new DirectoryInfo(path);
+                
+                // All paths must contain the drive they're located on; 
+                // they're considered invalid if they don't (for our purposes anyway)
+                if(Char.IsLetter(path[0]) && 
+                   path[1] == ':' && 
+                   path[2] == '\\')
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
             }
         }
     }
