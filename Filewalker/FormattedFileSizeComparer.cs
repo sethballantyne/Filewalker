@@ -35,7 +35,7 @@ namespace Filewalker
     /// 1.2 MB  345 B. The Comparer method attempts to read the measurement characters(MB, B, KB) 
     /// so they have to be present.
     /// </remarks>
-    class FormattedFileSizeComparer : System.Collections.IComparer
+    class FormattedFileSizeComparer : System.Collections.Generic.IComparer<string>
     {
         /// <summary>
         /// Used by the listview to sort the filesizes.
@@ -45,59 +45,72 @@ namespace Filewalker
         /// <returns><para/>less than 0 if x is less than y
         /// <para/>0 if x equals y
         /// <para/>1 if x is greater than y</returns>
-        public int Compare(object x, object y)
+        /// <exception cref="System.FormatException"><i>x</i> or <i>y</i> does not contain
+        /// a number in a valid format.</exception>
+        /// <exception cref="System.OverflowException"><i>x</i> or <i>y</i> contains a value
+        /// that is less than Double.MinValue or greater than Double.MaxValue.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">The string contained in either
+        /// <i>x</i> or <i>y</i> is too small to be a valid value.</exception>
+        public int Compare(string x, string y)
         {
-            string xText = (string)x;
-            string yText = (string)y;
-
-            string xMeasurement = xText.Substring(xText.Length - 2, 2).Trim();
-            string yMeasurement = yText.Substring(yText.Length - 2, 2).Trim();
-
-            // Test to see if the filesize of X is greater than Y
-            if (xMeasurement == "MB")
+            try
             {
-                if (yMeasurement == "KB" || yMeasurement == "B")
+                //string xText = (string)x;
+                //string yText = (string)y;
+
+                string xMeasurement = x.Substring(x.Length - 2, 2).Trim();
+                string yMeasurement = y.Substring(y.Length - 2, 2).Trim();
+
+                // Test to see if the filesize of X is greater than Y
+                if (xMeasurement == "MB")
                 {
-                    // The filesize of x is greater than y
+                    if (yMeasurement == "KB" || yMeasurement == "B")
+                    {
+                        // The filesize of x is greater than y
+                        return 1;
+                    }
+                }
+                else if (xMeasurement == "KB" && yMeasurement == "B")
+                {
                     return 1;
                 }
-            }
-            else if (xMeasurement == "KB" && yMeasurement == "B")
-            {
-                return 1;
-            }
 
-            // The filesize of X is not greater than Y; test to see if Y is greater
-            // than X.
-            if(yMeasurement == "MB")
-            {
-                if (xMeasurement == "KB" || xMeasurement == "B")
+                // The filesize of X is not greater than Y; test to see if Y is greater
+                // than X.
+                if (yMeasurement == "MB")
+                {
+                    if (xMeasurement == "KB" || xMeasurement == "B")
+                    {
+                        return -1;
+                    }
+                }
+                else if (yMeasurement == "KB" && xMeasurement == "B")
                 {
                     return -1;
                 }
-            }
-            else if(yMeasurement == "KB" && xMeasurement == "B")
-            {
-                return -1;
-            }
 
-            // Both X and Y are using the same measurement (they're both in megabytes, or 
-            // kilobytes or bytes). 
-            // determine which one is greater than the other.
-            char[] seperator = new char[1] { ' ' };
-            double xSize = Convert.ToDouble(xText.Split(' ')[0]);
-            double ySize = Convert.ToDouble(yText.Split(' ')[0]);
+                // Both X and Y are using the same measurement (they're both in megabytes, or 
+                // kilobytes or bytes). 
+                // determine which one is greater than the other.
+                char[] seperator = new char[1] { ' ' };
+                double xSize = Convert.ToDouble(x.Split(' ')[0]);
+                double ySize = Convert.ToDouble(y.Split(' ')[0]);
 
-            if (xSize > ySize)
-            {
-                return 1;
-            }
-            else if (xSize < ySize)
-            {
-                return -1;
-            }
+                if (xSize > ySize)
+                {
+                    return 1;
+                }
+                else if (xSize < ySize)
+                {
+                    return -1;
+                }
 
-            return 0;
+                return 0;
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }
