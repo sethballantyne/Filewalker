@@ -108,7 +108,7 @@ namespace Filewalker
         {
             if (item == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("item");
             }
 
             if (items.Count == maxSize)
@@ -122,7 +122,7 @@ namespace Filewalker
         /// <summary>
         /// Removes all items from the list.
         /// </summary>
-        void ICollection<T>.Clear()
+        public void Clear()
         {
             items.Clear();
         }
@@ -132,7 +132,7 @@ namespace Filewalker
         /// </summary>
         /// <param name="item">the item to search for.</param>
         /// <returns>true if the item is present in the list, otherwise false.</returns>
-        bool ICollection<T>.Contains(T item)
+        public bool Contains(T item)
         {
             return items.Contains(item);
         }
@@ -146,7 +146,7 @@ namespace Filewalker
         /// <exception cref="System.ArgumentOutOfRangeException"><i>arrayIndex</i> is less than 0.</exception>
         /// <exception cref="System.ArgumentException">Not enough elements in <i>array</i> to make the 
         /// copy.</exception>
-        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        public void CopyTo(T[] array, int arrayIndex)
         {
             try
             {
@@ -169,7 +169,7 @@ namespace Filewalker
         /// <summary>
         /// 
         /// </summary>
-        bool ICollection<T>.IsReadOnly
+        public bool IsReadOnly
         {
             get { throw new NotImplementedException(); }
         }
@@ -180,7 +180,7 @@ namespace Filewalker
         /// <param name="item">the item to remove.</param>
         /// <returns>true if the item is successfully removed, otherwise. False is 
         /// also returned if the item wasn't found.</returns>
-        bool ICollection<T>.Remove(T item)
+        public bool Remove(T item)
         {
            return items.Remove(item);
         }
@@ -223,7 +223,7 @@ namespace Filewalker
         {
             if (items == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("items");
             }
 
             try
