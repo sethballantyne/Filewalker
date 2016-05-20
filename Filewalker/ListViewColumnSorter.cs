@@ -77,47 +77,64 @@ namespace Filewalker
         /// <returns>less than 0 if x is less than y, 0 if x equals y or 1 if x is greater than y.</returns>
         public int Compare(object x, object y)
         {
-            int result;
-            ListViewItem[] items = new ListViewItem[2];
-
-            items[0] = (ListViewItem)x;
-            items[1] = (ListViewItem)y;
-
-            // name and directory columns
-            if(column == 0 || column == 1)
+            try
             {
-                result = caseInsensitiveComparer.Compare(
-                items[0].SubItems[column].Text,
-                items[1].SubItems[column].Text
-                );
-            }
-            else if(column == 2)    // size column
-            {
-                result = fileSizeComparer.Compare(
+                int result;
+                ListViewItem[] items = new ListViewItem[2];
+
+                items[0] = (ListViewItem)x;
+                items[1] = (ListViewItem)y;
+
+                // name and directory columns
+                if (column == 0 || column == 1)
+                {
+                    result = caseInsensitiveComparer.Compare(
                     items[0].SubItems[column].Text,
                     items[1].SubItems[column].Text
                     );
-            }
-            else // date column
-            {
-                result = dateTimeComparer.Compare(
-                    items[0].SubItems[column].Text,
-                    items[1].SubItems[column].Text
-                );
-            }
+                }
+                else if (column == 2)    // size column
+                {
+                    result = fileSizeComparer.Compare(
+                        items[0].SubItems[column].Text,
+                        items[1].SubItems[column].Text
+                        );
+                }
+                else // date column
+                {
+                    result = dateTimeComparer.Compare(
+                        items[0].SubItems[column].Text,
+                        items[1].SubItems[column].Text
+                    );
+                }
 
-            if (sortOrder == SortOrder.Ascending)
-            {
-                return result;
+                if (sortOrder == SortOrder.Ascending)
+                {
+                    return result;
+                }
+                else if (sortOrder == SortOrder.Descending)
+                {
+                    return -result;
+                }
+                else
+                {
+                    // 0 = the items are equal.
+                    return 0;
+                }
             }
-            else if(sortOrder == SortOrder.Descending)
+            catch(Exception e)
             {
-                return -result;
-            }
-            else
-            {
-                // 0 = the items are equal.
-                return 0;
+                // Any exceptions fired within the compare method are due to programmer error, or something
+                // really fucking weird is going on at the users end. The output is meant for debugging purposes
+                // more than anything.
+                string msg = String.Format("Exception caught: {0}\n" +
+                    "Make a copy of the error message, because as soon you click OK the program is terminating!" +
+                    "\n\n{1}", e.Message, e.StackTrace);
+
+                MessageBox.Show(msg, "Unholy Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                // Because we have to return something.
+                return -1;
             }
         }
 
