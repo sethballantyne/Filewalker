@@ -74,8 +74,20 @@ namespace Filewalker
         /// <param name="files">The absolute paths of the all the files to be copied.</param>
         /// <param name="destination">the target directory the file will be copied to.</param>
         /// <param name="totalBytes">the total size in bytes of all the files in <i>files</i></param>
+        /// <exception cref="System.ArgumentNullException"><i>files</i> is <b>null</b> or <i>destination</i>
+        /// is <b>null</b> or is a zero-length string.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException"><i>totalBytes</i> is less than or equal to 0.</exception>
         public FileCopy(FilePath[] files, string destination, long totalBytes) : this()
         {
+            if (files == null)
+                throw new ArgumentNullException("files");
+
+            if (String.IsNullOrEmpty(destination))
+                throw new ArgumentNullException("destination");
+
+            if (totalBytes <= 0)
+                throw new ArgumentOutOfRangeException("totalBytes");
+
             filesToCopy = files;
             destinationDir = destination;
             this.totalBytes = totalBytes;
