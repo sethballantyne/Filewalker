@@ -38,11 +38,11 @@ namespace Filewalker
     /// </summary>
     public partial class DeleteFilesDlg : Form
     {
-        //
+        // The items selected by the user for deletion
         ListViewItem[] filesToDelete = null;
 
         //
-        int currentIndex = 0;
+        //int currentIndex = 0;
 
         public DeleteFilesDlg()
         {
@@ -55,20 +55,27 @@ namespace Filewalker
         }
 
         /// <summary>
-        /// 
+        /// Initialises a new instance of the delete files dialog, using the specified selected items
+        /// in the listview control. 
         /// </summary>
-        /// <param name="filesToDelete"></param>
-        public DeleteFilesDlg(ListViewItem[] filesToDelete)
+        /// <param name="files">The selected listview items reprensenting the files that are to be deleted.</param>
+        /// <exception cref="System.ArgumentNullException"><i>files</i> is set to <b>null</b>.</exception>
+        public DeleteFilesDlg(ListViewItem[] files)
             : this()
         {
-            this.filesToDelete = filesToDelete;
+            if (files == null)
+            {
+                throw new ArgumentNullException("files");
+            }
+
+            this.filesToDelete = files;
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             for(int i = 0; i < filesToDelete.Length; i++)
             {
-                currentIndex = i;
+               // currentIndex = i;
 
                 // Allow the user to cancel. If you don't do this, clicking cancel won't
                 // do anything!
