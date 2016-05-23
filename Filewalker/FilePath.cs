@@ -48,10 +48,11 @@ namespace Filewalker
         /// <exception cref="System.ArgumentNullException"><i>filename</i> or <i>path</i> are <b>null</b>.</exception>
         public FilePath(string filename, string path)
         {
-            if (filename == null || path == null)
-            {
-                throw new ArgumentNullException();
-            }
+            if(filename == null)
+                throw new ArgumentNullException("filename");
+
+            if (path == null)
+                throw new ArgumentNullException("path");
 
             if ((filename.Length == 0 ||
                 path.Length == 0 ||

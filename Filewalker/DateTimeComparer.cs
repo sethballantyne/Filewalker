@@ -42,12 +42,22 @@ namespace Filewalker
         /// <param name="y">The second string to compare</param>
         /// <returns>less than 0 if x is earlier than y, 0 if x is the same as y
         /// or greater than 0 if x is later than y.</returns>
+        /// <exception cref="System.ArgumentNullException"><i>x</i> or <i>y</i> is <b>null</b>.</exception>
+        /// <exception cref="System.FormatException"><i>x</i> or <i>y</i> does not contain a valid
+        /// string representation of a date and time.</exception>
         public int Compare(object x, object y)
         {
-            DateTime firstDate = DateTime.Parse(x as String);
-            DateTime secondDate = DateTime.Parse(y as String);
+            try
+            {
+                DateTime firstDate = DateTime.Parse(x as String);
+                DateTime secondDate = DateTime.Parse(y as String);
 
-            return DateTime.Compare(firstDate, secondDate); 
+                return DateTime.Compare(firstDate, secondDate);
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

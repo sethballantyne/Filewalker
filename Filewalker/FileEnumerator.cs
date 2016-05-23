@@ -77,8 +77,20 @@ namespace Filewalker
         /// the files to enumerate.</param>
         /// <param name="imageList">the ImageList used to store the icon of each file type
         /// processed.</param>
+        /// <exception cref="System.ArgumentNullException"><i>selectedPath</i> is <b>null</b> or a
+        /// zero length string, or <i>imageList</i> is <b>null</b>.</exception>
         public FileEnumerator(string selectedPath, ImageList imageList) : this()
         {
+            if (String.IsNullOrEmpty(selectedPath))
+            {
+                throw new ArgumentNullException("selectedPath");
+            }
+
+            if (imageList == null)
+            {
+                throw new ArgumentNullException("imageList");
+            }
+
             this.imageList = imageList;
             this.selectedPath = selectedPath;
         }

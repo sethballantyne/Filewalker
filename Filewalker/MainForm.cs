@@ -509,9 +509,7 @@ namespace Filewalker
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // returns null if there's no keys
-            string[] registryValues = (string[])Registry.GetValue(registryKey,
-            "Directories", null);
+            string[] registryValues = ReadRegistry(registryKey, "Directories");
 
             if (registryValues != null)
             {
@@ -589,7 +587,7 @@ namespace Filewalker
         /// <summary>
         /// Verifies whether a specified string is an absolute path or not.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">The formatted string to verify.</param>
         /// <returns><b>true</b> if <i>path</i> contains a valid absolute path,
         /// else returns false.</returns>
         bool IsValidPath(string path)
@@ -617,6 +615,38 @@ namespace Filewalker
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Reads the string array value stored at the specified registry key. 
+        /// </summary>
+        /// <param name="key">The registry key containing the value to read.</param>
+        /// <param name="value">The value to read from the registry.</param>
+        /// <returns><b>null</b> if the user lacks sufficient permissions to read from the registry key,
+        /// if the key specified in <i>key</i> has been marked for deletion, <i>key</i> does not
+        /// begin with a valid registry root or the specified value does not exist; otherwise a string array
+        /// containing the desired values.</returns>
+        string[] ReadRegistry(string key, string value)
+        {
+            string[] registryValues = null;
+
+            try
+            {
+                // returns null if there's no keys
+                registryValues = (string[])Registry.GetValue(key, value, null);
+            }
+            // Registry.GetValue(...) throws System.Security.SecurityException, 
+            // System.IO.IOException and System.ArgumentException. 
+            // none of these exceptions are critical in this case and shouldn't affect the 
+            // execution of the program; it just means the users history won't be
+            // displayed. 
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error reading the registry",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            return registryValues;
         }
     }
 }
