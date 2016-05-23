@@ -367,7 +367,7 @@ namespace Filewalker
             // dateColumnHeader
             // 
             this.dateColumnHeader.Text = "Date";
-            this.dateColumnHeader.Width = 100;
+            this.dateColumnHeader.Width = 139;
             // 
             // imageList
             // 
