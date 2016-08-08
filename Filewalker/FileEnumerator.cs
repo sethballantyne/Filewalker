@@ -136,6 +136,13 @@ namespace Filewalker
                 items[3] = File.GetCreationTime(filePath).ToString();
 
                 string fileExtension = Path.GetExtension(filePath);
+
+                // the constructor for ListViewItem doesn't like empty strings being
+                // passed into the imageKey parameter; it ignores them it seems. 
+                // this is a problem if the file doesn't actually have an extension.
+                if (fileExtension == String.Empty)
+                    fileExtension = "<blank>";
+
                 if (imageList.Images[fileExtension] == null)
                 {
                     Icon associatedIcon = ShellIcon.GetSmallIcon(file.DirectoryName + "\\" + file.Name);

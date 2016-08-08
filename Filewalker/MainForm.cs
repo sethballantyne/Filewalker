@@ -338,7 +338,16 @@ namespace Filewalker
 
         private void listView_DoubleClick(object sender, EventArgs e)
         {
-            Process.Start(GetSelectedFilePath());
+            try
+            {
+                Process.Start(GetSelectedFilePath());
+            }
+            catch (Exception ex)
+            {
+                string message = String.Format("Error opening file: {0}", ex.Message);
+
+                MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
