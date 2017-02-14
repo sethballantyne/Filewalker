@@ -440,7 +440,8 @@ namespace Filewalker
                         // internally by the dialog. If an exception is caught, it's displayed
                         // and then treated as if the user has cancelled the task. 
                         DeleteFilesDlg deleteFilesDlg = new DeleteFilesDlg(selectedItems);
-
+                        
+                        //FileSystem.De
                         if (deleteFilesDlg.ShowDialog() == DialogResult.OK)
                         {
                             for (int i = 0; i < selectedItems.Length; i++)

@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Filewalker
 {
@@ -90,8 +91,9 @@ namespace Filewalker
                 string fileToDelete = Path.Combine(filesToDelete[i].SubItems[1].Text,
                     filesToDelete[i].Text);
 
-                File.Delete(fileToDelete);
-                
+                //File.Delete(fileToDelete);
+                FileSystem.DeleteFile(fileToDelete, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+
                 backgroundWorker.ReportProgress(percentage, fileToDelete);
             }
         }
