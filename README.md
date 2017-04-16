@@ -5,5 +5,5 @@ on filename, size, and creation date. Nothing special, but solves the problem I 
 
 It's written in C#, using .NET 4.5 and is released under the MIT license. 
 
-Any questions and comments can be sent to <seth.ballantyne@gmail.com>
+Any questions and comments can be sent to seth dot ballantyne at gmail dot com, or leave a message. 
 
