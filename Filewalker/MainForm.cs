@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Reflection;
 using Microsoft.Win32;
 
 namespace Filewalker
@@ -82,6 +83,12 @@ namespace Filewalker
            
             listView.ListViewItemSorter = listViewColumnSorter;
             listView.SmallImageList = imageList;
+
+            this.Text += String.Format(
+                " {0}.{1}.{2}",
+                Assembly.GetExecutingAssembly().GetName().Version.Major,
+                Assembly.GetExecutingAssembly().GetName().Version.Minor,
+                Assembly.GetExecutingAssembly().GetName().Version.Build);
         }
 
         /// <summary>
