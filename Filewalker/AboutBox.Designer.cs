@@ -53,6 +53,7 @@ namespace Filewalker
             this.licenceTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // okButton
@@ -67,12 +68,12 @@ namespace Filewalker
             // 
             // licenceTextBox
             // 
-            this.licenceTextBox.Location = new System.Drawing.Point(12, 66);
+            this.licenceTextBox.Location = new System.Drawing.Point(12, 71);
             this.licenceTextBox.Multiline = true;
             this.licenceTextBox.Name = "licenceTextBox";
             this.licenceTextBox.ReadOnly = true;
             this.licenceTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.licenceTextBox.Size = new System.Drawing.Size(300, 130);
+            this.licenceTextBox.Size = new System.Drawing.Size(300, 125);
             this.licenceTextBox.TabIndex = 1;
             this.licenceTextBox.Text = resources.GetString("licenceTextBox.Text");
             // 
@@ -89,17 +90,28 @@ namespace Filewalker
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(65, 31);
+            this.label2.Location = new System.Drawing.Point(67, 55);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(196, 13);
             this.label2.TabIndex = 3;
             this.label2.Text = "Filewalker is free, open source software.";
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(53, 32);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(220, 13);
+            this.linkLabel1.TabIndex = 4;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "https://github.com/sethballantyne/Filewalker";
             // 
             // AboutBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(324, 237);
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.licenceTextBox);
@@ -125,6 +137,7 @@ namespace Filewalker
         private System.Windows.Forms.TextBox licenceTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.LinkLabel linkLabel1;
 
     }
 }
